@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Poom5741/learn_go_api/auth"
 	"github.com/Poom5741/learn_go_api/todo"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,9 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	r.GET("/tokenz", auth.AccessToken)
+
 	handler := todo.NewTodoHandler(db)
 	r.POST("/todos", handler.NewTask)
 
