@@ -8,20 +8,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AccessToken(c *gin.Context) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(5 * time.Minute).Unix(),
-	})
-	ss, err := token.SignedString([]byte("==singature=="))
+func AccessToken(signature string) gin.HandlerFunc {
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+	return func(c *gin.Context) {
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(5 * time.Minute).Unix(),
 		})
-		return
-	}
+		ss, err := token.SignedString([]byte(signature))
 
-	c.JSON(http.StatusOK, gin.H{
-		"token": ss,
-	})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"token": ss,
+		})
+	}
 }
